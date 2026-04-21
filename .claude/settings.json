@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python -m py_compile core/config.py gui/setup_wizard.py)",
+      "Bash(.venv/Scripts/python -m py_compile gui/capture_selector.py)"
+    ]
+  }
+}
