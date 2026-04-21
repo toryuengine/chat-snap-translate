@@ -1,6 +1,7 @@
 """グローバルホットキー管理・翻訳ワークフロー制御"""
 import threading
 import time
+import traceback
 
 import keyboard
 
@@ -98,6 +99,7 @@ class HotkeyManager:
                 timeout=8.0,
             )
         except Exception as e:
+            traceback.print_exc()  # コンソールにフルエラーを出力
             if not self._cancel_event.is_set():
                 msg = str(e)
                 if len(msg) > 80:

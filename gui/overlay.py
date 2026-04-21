@@ -64,19 +64,22 @@ class OverlayWindow:
     # ------------------------------------------------------------------ #
 
     def _place_window(self) -> None:
+        self.window.minsize(420, 0)
         pos = self.config.window_position
         if pos.get("x") is not None and pos.get("y") is not None:
             self.window.geometry(f"+{pos['x']}+{pos['y']}")
         else:
             sw = self.root.winfo_screenwidth()
             sh = self.root.winfo_screenheight()
-            self.window.geometry(f"420x80+{sw - 440}+{sh - 200}")
+            self.window.geometry(f"+{sw - 440}+{sh - 200}")
 
     def _snap_to_bottom_right(self) -> None:
         """ユーザーがドラッグしていなければ右下に吸着する"""
+        # サイズを自動調整させるためリセット
+        self.window.geometry("")
+        self.window.update_idletasks()
         if self.config.window_position.get("x") is not None:
             return  # ユーザー指定位置を尊重
-        self.window.update_idletasks()
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
         w = max(self.window.winfo_reqwidth(), 420)

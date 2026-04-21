@@ -80,12 +80,13 @@ def translate_image(
 def _translate_openai(api_key: str, model: str, image_b64: str, timeout: float) -> list[dict]:
     from openai import OpenAI
 
-    client = OpenAI(api_key=api_key, timeout=timeout)
+    # SDK v2 では timeout は httpx.Timeout オブジェクトまたは秒数で渡す
+    client = OpenAI(api_key=api_key)
 
     response = client.chat.completions.create(
         model=model,
-        max_tokens=1024,
-        response_format={"type": "json_object"},  # JSON モード（構文エラーを防止）
+        max_completion_tokens=1024,
+        timeout=timeout,
         messages=[
             {"role": "system", "content": _SYSTEM_PROMPT},
             {
@@ -97,7 +98,7 @@ def _translate_openai(api_key: str, model: str, image_b64: str, timeout: float) 
                     },
                     {
                         "type": "text",
-                        "text": "Extract and translate all chat text in this image.",
+                        "text": "上記の画像のチャットテキストを読み取り、指定のJSON形式で返してください。",
                     },
                 ],
             },
@@ -105,6 +106,12 @@ def _translate_openai(api_key: str, model: str, image_b64: str, timeout: float) 
     )
 
     raw = response.choices[0].message.content.strip()
+
+    # コードブロック（```json ... ```）が含まれる場合に除去
+    if raw.startswith("```"):
+        parts = raw.split("```")
+        raw = parts[1].lstrip("json").strip() if len(parts) > 1 else raw
+
     data = json.loads(raw)
     return data.get("lines", [])
 
