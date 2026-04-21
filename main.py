@@ -4,8 +4,8 @@
 起動フロー:
   1. 設定読み込み (core.config)
   2. tkinter 初期化（メインウィンドウは非表示）
-  3. オーバーレイウィンドウ生成 (gui.overlay)
-  4. 未設定なら初回セットアップウィザード (gui.setup_wizard)
+  3. .env 未設定なら API キー設定ガイドを表示 (gui.setup_wizard)
+  4. キャプチャエリア選択（毎回）
   5. グローバルホットキーバインド (gui.hotkey_manager)
   6. タスクトレイアイコンをデーモンスレッドで起動 (gui.tray_icon)
   7. tkinter メインループ（イベント待機）
@@ -38,17 +38,25 @@ def main() -> None:
     # --- オーバーレイウィンドウ（初期状態は非表示） ---
     overlay = OverlayWindow(root, config)
 
-    # --- 初回セットアップ ---
-    if not config.is_configured():
+    # --- .env チェック（APIキー未設定なら設定ガイドを表示） ---
+    if not config.is_env_ready():
         from gui.setup_wizard import SetupWizard
-
         wizard = SetupWizard(root, config)
         root.wait_window(wizard.window)
 
-        if not config.is_configured():
-            # セットアップがキャンセルされた
+        if not config.is_env_ready():
             root.quit()
             sys.exit(0)
+
+    # --- キャプチャエリア選択（起動のたびに毎回実施） ---
+    from gui.capture_selector import CaptureSelector
+    selector = CaptureSelector(root, config)
+    root.wait_window(selector.window)
+
+    if not config.capture_area:
+        # Esc でキャンセルされた場合は終了
+        root.quit()
+        sys.exit(0)
 
     # --- グローバルホットキーバインド ---
     hotkey_manager = HotkeyManager(config, overlay)
