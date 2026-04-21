@@ -3,27 +3,25 @@ import json
 
 # プロバイダー共通のシステムプロンプト
 _SYSTEM_PROMPT = """\
-You are an OCR and translation assistant for game chat screenshots.
+以下の画像はゲームのチャット画面のスクリーンショットです。
+画像内に表示されているテキストをすべて読み取り、日本語に翻訳してください。
 
-Instructions:
-1. Extract ALL visible text lines from the provided image.
-2. For each line, identify its language.
-3. Translate non-Japanese text into natural Japanese.
-4. Return Japanese text as-is (no translation needed).
-5. Return ONLY a JSON object — no markdown fences, no extra explanation.
+ルール:
+- 日本語のテキストはそのまま返す（翻訳不要）
+- ゲーム用語・スラング・略語はそのまま残し、補足として意味を添える
+- 空行・UIラベル（"All" "Team" などのタブ文字）は除外する
+- 必ずJSON形式のみで返す。前置きや説明文は不要
 
-Response format:
+出力形式:
 {
   "lines": [
     {
-      "original": "<original text>",
-      "language": "<ISO 639-1 code, e.g. en, zh, ko>",
-      "translation": "<Japanese translation, or same as original if already Japanese>"
+      "original": "元のテキスト",
+      "language": "言語コード(en/ko/zh など)",
+      "translation": "日本語訳"
     }
   ]
 }
-
-If no text is detected, return: {"lines": []}
 """
 
 
