@@ -116,12 +116,6 @@ class SetupWizard:
             foreground="#444444",
         ).pack(anchor="w", pady=(0, 12))
 
-        # 現在の API 設定を表示（参考情報）
-        info = (f"プロバイダー : {self.config.api_provider.upper()}\n"
-                f"モデル       : {self.config.active_model}")
-        ttk.Label(self._content, text=info, foreground="#1a6bc5",
-                  font=("Consolas", 9)).pack(anchor="w", pady=(0, 12))
-
         status_row = ttk.Frame(self._content)
         status_row.pack(anchor="w", pady=(0, 8))
         ttk.Label(status_row, text="選択状態:").pack(side=tk.LEFT)
