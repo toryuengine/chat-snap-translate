@@ -22,6 +22,9 @@ Thumbs.db
 desktop.ini
 .DS_Store
 
+# 起動スクリプト（ローカル専用）
+*.bat
+
 # ビルド成果物
 dist/
 build/
